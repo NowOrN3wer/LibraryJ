@@ -1,4 +1,4 @@
-package com.idb.microservicedemo.library.service.writer.imp;
+package com.idb.microservicedemo.library.repository.imp.WriterRepositoryImpl;
 
 import com.idb.microservicedemo.library.domain.entities.writer.QWriter;
 import com.idb.microservicedemo.library.domain.entities.writer.Writer;
@@ -6,8 +6,7 @@ import com.idb.microservicedemo.library.dto.writer.GetPageWriterRequest;
 import com.idb.microservicedemo.library.dto.writer.GetPageWriterResponse;
 import com.idb.microservicedemo.library.dto.writer.WriterDto;
 import com.idb.microservicedemo.library.mapper.WriterMapper;
-import com.idb.microservicedemo.library.repository.WriterRepository;
-import com.idb.microservicedemo.library.service.writer.WriterService;
+import com.idb.microservicedemo.library.repository.custom.WriterRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -15,33 +14,18 @@ import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-@Service
-@Transactional
-public class WriterServiceImpl implements WriterService {
+@RequiredArgsConstructor
+public class WriterRepositoryImpl implements WriterRepositoryCustom {
 
-    private final WriterRepository writerRepository;
-    private final WriterMapper writerMapper;
     private final EntityManager em;
-
-    public WriterServiceImpl(WriterRepository writerRepository, WriterMapper writerMapper, EntityManager em) {
-        this.writerRepository = writerRepository;
-        this.writerMapper = writerMapper;
-        this.em = em;
-    }
-
-    @Override
-    public WriterDto create(WriterDto dto) {
-        Writer entity = writerMapper.toEntity(dto);
-        Writer saved = writerRepository.save(entity);
-        return writerMapper.toDto(saved);
-    }
+    private final WriterMapper writerMapper;
 
     @Override
     public GetPageWriterResponse getPage(GetPageWriterRequest request) {
@@ -59,7 +43,7 @@ public class WriterServiceImpl implements WriterService {
 
         // --- toplam kayıt sayısı ---
         Long total = queryFactory.select(w.count()).from(w).where(where).fetchOne();
-        int totalCount = total != null ? total.intValue() : 0;
+        int totalCount = Objects.requireNonNullElse(total, 0L).intValue();
 
         // --- asıl sorgu ---
         JPAQuery<Writer> query = queryFactory.selectFrom(w).where(where);
@@ -107,5 +91,4 @@ public class WriterServiceImpl implements WriterService {
 
         return resp;
     }
-
 }
