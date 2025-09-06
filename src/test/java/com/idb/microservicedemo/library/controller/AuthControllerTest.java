@@ -1,7 +1,7 @@
 package com.idb.microservicedemo.library.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.idb.microservicedemo.library.domain.appuser.AppUser;
+import com.idb.microservicedemo.library.domain.entities.appuser.AppUser;
 import com.idb.microservicedemo.library.dto.auth.LoginRequest;
 import com.idb.microservicedemo.library.repository.AppUserRepository;
 import org.junit.jupiter.api.BeforeEach;

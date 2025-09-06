@@ -1,6 +1,6 @@
 package com.idb.microservicedemo.library.repository;
 
-import com.idb.microservicedemo.library.domain.appuser.AppUser;
+import com.idb.microservicedemo.library.domain.entities.appuser.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

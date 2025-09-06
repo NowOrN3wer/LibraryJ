@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -17,13 +18,9 @@ import java.util.UUID;
 public abstract class BaseEntity {
 
     @Id
-    @GeneratedValue(generator = "UUIDv7")
-    @GenericGenerator(
-            name = "UUIDv7",
-            strategy = "org.hibernate.id.uuid.UuidGenerator" // Hibernate 6 ile UUIDv7 destekleniyor
-    )
+    @UuidGenerator(style = UuidGenerator.Style.TIME) // TIME = UUIDv7
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "UUID")
-    private UUID id = UUID.randomUUID(); // fallback, DB generate de olabilir
+    private UUID id;
 
     @Column(nullable = false)
     private int version = 1;

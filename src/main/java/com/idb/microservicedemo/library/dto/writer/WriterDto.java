@@ -12,7 +12,6 @@ import jakarta.validation.constraints.*;
 
 @Getter
 @Setter
-@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class WriterDto extends BaseDto {

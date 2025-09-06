@@ -25,32 +25,59 @@ repositories {
 }
 
 dependencies {
-    // === mevcutlar ===
+    // === Spring & infra ===
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.12'
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-database-postgresql'
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.12'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
     runtimeOnly 'org.postgresql:postgresql'
-    runtimeOnly   'io.jsonwebtoken:jjwt-impl:0.12.6'
-    runtimeOnly   'io.jsonwebtoken:jjwt-jackson:0.12.6'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+    // === Lombok ===
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // Spring config processor (opsiyonel ama yararlı)
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // === MapStruct ===
+    implementation 'org.mapstruct:mapstruct:1.6.2'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
+    // Lombok + MapStruct uyumu
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
+    // === QueryDSL (JPA/Jakarta) ===
+    implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
+    annotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'  // Q* üretimi
+
+    // >>> APT classpath fix (çok önemli) <<<
+    // QueryDSL APT çalışırken jakarta anotasyonlarını görsün:
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+
+    // === Test ===
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:postgresql'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    compileOnly 'org.mapstruct:mapstruct:1.6.2'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
+
+    // (İstersen test derlemesinde de APT çalışsın -> Q* ve MapperImpl test kaynakları için)
+    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+    testAnnotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'
+    testAnnotationProcessor 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+    testAnnotationProcessor 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 }
 
 tasks.named('test') {
