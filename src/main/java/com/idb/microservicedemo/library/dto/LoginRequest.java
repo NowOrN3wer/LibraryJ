@@ -1,0 +1,23 @@
+package com.idb.microservicedemo.library.dto;
+
+public class LoginRequest {
+    private String emailOrUserName;
+    private String password;
+
+    // Getters & Setters
+    public String getEmailOrUserName() {
+        return emailOrUserName;
+    }
+
+    public void setEmailOrUserName(String emailOrUserName) {
+        this.emailOrUserName = emailOrUserName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
