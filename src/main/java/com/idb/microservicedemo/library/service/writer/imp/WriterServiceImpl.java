@@ -18,7 +18,6 @@ import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,67 +44,86 @@ public class WriterServiceImpl implements WriterService {
 
     @Override
     public GetPageWriterResponse getPage(GetPageWriterRequest request) {
-        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+        JPAQueryFactory qf = new JPAQueryFactory(em);
         QWriter w = QWriter.writer;
 
-        // --- filtreler ---
-        BooleanBuilder where = new BooleanBuilder();
-        if (request.getFirstName() != null && !request.getFirstName().isBlank()) {
-            where.and(w.firstName.containsIgnoreCase(request.getFirstName()));
-        }
-        if (request.getNationality() != null && !request.getNationality().isBlank()) {
-            where.and(w.nationality.eq(request.getNationality()));
-        }
+        // 1) Filtre
+        BooleanBuilder where = buildFilters(request, w);
 
-        // --- toplam kayıt sayısı ---
-        Long total = queryFactory.select(w.count()).from(w).where(where).fetchOne();
-        int totalCount = total != null ? total.intValue() : 0;
+        // 2) Toplam kayıt
+        int totalCount = countAll(qf, w, where);
 
-        // --- asıl sorgu ---
-        JPAQuery<Writer> query = queryFactory.selectFrom(w).where(where);
+        // 3) Veri sorgusu
+        JPAQuery<Writer> query = qf.selectFrom(w).where(where);
+        applySorting(request, query, w);
+        Paging p = normalizePaging(request);
+        applyPaging(p, request.isGetAllData(), query);
 
-        // --- sıralama (whitelist) ---
-        if (request.getOrderByField() != null && !request.getOrderByField().isBlank()) {
-            Map<String, ComparableExpressionBase<?>> sortable = new HashMap<>();
-            sortable.put("firstName", w.firstName);
-            sortable.put("lastName", w.lastName);
-            sortable.put("email", w.email);
-            sortable.put("nationality", w.nationality);
-
-            ComparableExpressionBase<?> sortField = sortable.get(request.getOrderByField());
-            if (sortField != null) {
-                Order order = request.isOrderByAsc() ? Order.ASC : Order.DESC;
-                query.orderBy(new OrderSpecifier<>(order, sortField));
-            } else {
-                query.orderBy(w.firstName.asc()); // default
-            }
-        } else {
-            query.orderBy(w.firstName.asc()); // default
-        }
-
-        // --- sayfalama ---
-        if (!request.isGetAllData()) {
-            int pageNumber = Math.max(1, request.getPageNumber());
-            int pageSize = Math.max(1, request.getPageSize());
-            query.offset((long) (pageNumber - 1) * pageSize).limit(pageSize);
-        }
-
-        // --- fetch & map ---
+        // 4) Map & response
         List<WriterDto> list = query.fetch().stream()
                 .map(writerMapper::toDto)
                 .toList();
 
-        // --- response ---
         GetPageWriterResponse resp = new GetPageWriterResponse();
         resp.setList(list);
         resp.setTotalCount(totalCount);
-        resp.setPageNumber(request.getPageNumber());
-        resp.setPageSize(request.getPageSize());
+        resp.setPageNumber(p.pageNumber);
+        resp.setPageSize(p.pageSize);
         resp.setOrderByField(request.getOrderByField());
         resp.setOrderByAsc(request.isOrderByAsc());
         resp.setGetAllData(request.isGetAllData());
-
         return resp;
     }
 
+    private static final Map<String, ComparableExpressionBase<?>> SORTABLE = Map.of(
+            "firstName", QWriter.writer.firstName,
+            "lastName",  QWriter.writer.lastName,
+            "email",     QWriter.writer.email,
+            "nationality", QWriter.writer.nationality
+    );
+
+    private BooleanBuilder buildFilters(GetPageWriterRequest req, QWriter w) {
+        BooleanBuilder where = new BooleanBuilder();
+        if (req.getFirstName() != null && !req.getFirstName().isBlank()) {
+            where.and(w.firstName.containsIgnoreCase(req.getFirstName().trim()));
+        }
+        if (req.getNationality() != null && !req.getNationality().isBlank()) {
+            where.and(w.nationality.eq(req.getNationality().trim()));
+        }
+        return where;
+    }
+
+    private int countAll(JPAQueryFactory qf, QWriter w, BooleanBuilder where) {
+        Long total = qf.select(w.id.count())
+                .from(w)
+                .where(where)
+                .fetchOne();
+        return total != null ? total.intValue() : 0;
+    }
+
+    private void applySorting(GetPageWriterRequest req, JPAQuery<Writer> query, QWriter w) {
+        String field = req.getOrderByField();
+        ComparableExpressionBase<?> expr =
+                (field == null || field.isBlank()) ? null : SORTABLE.get(field);
+
+        if (expr != null) {
+            query.orderBy(new OrderSpecifier<>(req.isOrderByAsc() ? Order.ASC : Order.DESC, expr));
+        } else {
+            // default
+            query.orderBy(w.firstName.asc());
+        }
+    }
+
+    private record Paging(int pageNumber, int pageSize) {}
+    private Paging normalizePaging(GetPageWriterRequest req) {
+        int pageNumber = Math.max(1, req.getPageNumber());
+        int pageSize   = Math.max(1, req.getPageSize());
+        return new Paging(pageNumber, pageSize);
+    }
+
+    private void applyPaging(Paging p, boolean getAllData, JPAQuery<Writer> query) {
+        if (getAllData) return;
+        long offset = (long) (p.pageNumber - 1) * p.pageSize;
+        query.offset(offset).limit(p.pageSize);
+    }
 }
