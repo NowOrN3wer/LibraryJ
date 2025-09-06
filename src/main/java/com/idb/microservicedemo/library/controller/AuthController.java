@@ -6,6 +6,8 @@ import com.idb.microservicedemo.library.dto.LoginRequest;
 import com.idb.microservicedemo.library.dto.LoginResponse;
 import com.idb.microservicedemo.library.repository.AppUserRepository;
 import com.idb.microservicedemo.library.security.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,16 +30,17 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Result<LoginResponse> login(@RequestBody LoginRequest request) {
+    public Result<LoginResponse> login(@RequestBody LoginRequest request,
+                                       HttpServletResponse resp) {
         AppUser user = userRepository.findByUsername(request.getEmailOrUserName())
                 .or(() -> userRepository.findByEmail(request.getEmailOrUserName()))
                 .orElse(null);
 
         if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return Result.failure(401, "Invalid credentials");
+            resp.setStatus(HttpStatus.UNAUTHORIZED.value()); // <-- HTTP 401
+            return Result.failure(401, "Invalid credentials"); // body aynı kalır
         }
 
-        // 90 dk access token
         String token = jwtTokenProvider.generateToken(
                 user.getId().toString(),
                 user.getFullName(),
@@ -45,7 +48,6 @@ public class AuthController {
                 user.getUsername()
         );
 
-        // 180 dk refresh token
         String refreshToken = jwtTokenProvider.generateRefreshToken();
         OffsetDateTime refreshExpiry = OffsetDateTime.now().plusMinutes(180);
 
@@ -54,9 +56,7 @@ public class AuthController {
         userRepository.save(user);
 
         return Result.succeed(new LoginResponse(
-                token,
-                refreshToken,
-                refreshExpiry.toInstant()
+                token, refreshToken, refreshExpiry.toInstant()
         ));
     }
 }

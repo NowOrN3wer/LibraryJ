@@ -4,6 +4,11 @@ public class LoginRequest {
     private String emailOrUserName;
     private String password;
 
+    public LoginRequest(String emailOrUserName, String password) {
+        this.emailOrUserName = emailOrUserName;
+        this.password = password;
+    }
+
     // Getters & Setters
     public String getEmailOrUserName() {
         return emailOrUserName;
