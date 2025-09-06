@@ -79,6 +79,7 @@ public final class Result<T> {
         this.errorMessages = errorMessages;
     }
 
+    @JsonProperty("isSuccessful")
     public boolean isSuccessful() {
         return isSuccessful;
     }

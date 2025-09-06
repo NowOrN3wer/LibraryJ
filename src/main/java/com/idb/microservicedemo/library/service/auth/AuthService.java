@@ -5,4 +5,5 @@ import com.idb.microservicedemo.library.dto.auth.LoginResponse;
 
 public interface AuthService {
     Result<LoginResponse> login(String emailOrUsername, String password);
+    Result<LoginResponse> refresh(String refreshToken);
 }
