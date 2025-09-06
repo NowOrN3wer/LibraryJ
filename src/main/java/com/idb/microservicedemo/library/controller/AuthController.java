@@ -5,7 +5,6 @@ import com.idb.microservicedemo.library.dto.auth.LoginRequest;
 import com.idb.microservicedemo.library.dto.auth.LoginResponse;
 import com.idb.microservicedemo.library.dto.auth.RefreshRequest;
 import com.idb.microservicedemo.library.service.auth.AuthService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,17 +16,12 @@ public class AuthController {
     public AuthController(AuthService authService) { this.authService = authService; }
 
     @PostMapping("/login")
-    public Result<LoginResponse> login(@RequestBody LoginRequest request,
-                                       HttpServletResponse resp) {
-        var result = authService.login(request.getEmailOrUserName(), request.getPassword());
-        resp.setStatus(result.getStatusCode()); // 200/401 vs.
-        return result;
+    public Result<LoginResponse> login(@RequestBody LoginRequest request) {
+        return authService.login(request.getEmailOrUserName(), request.getPassword());
     }
 
     @PostMapping("/refresh")
-    public Result<LoginResponse> refresh(@RequestBody RefreshRequest request, HttpServletResponse resp) {
-        Result<LoginResponse> result = authService.refresh(request.refreshToken());
-        resp.setStatus(result.getStatusCode()); // 200/401 vs.
-        return result;
+    public Result<LoginResponse> refresh(@RequestBody RefreshRequest request) {
+        return authService.refresh(request.refreshToken());
     }
 }
