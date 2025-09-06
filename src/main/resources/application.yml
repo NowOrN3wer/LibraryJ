@@ -20,7 +20,7 @@ spring:
 app:
   security:
     jwt:
-      secret: "Z1o3Z4z+FvZTfK2tGjXz6PpE+U0aO6HshZC6vM6QWkO6tWqKj2wXzZrV8U0hGd9sGj7uPzH8sVj0fPzT2f=="
+      secret: "C/gzRSoxa/wWapxWGKVG9TBrlxSCjTlVVH3ZUhUuwGuzKZ0aoI7SHYq6upqURoTE04KV4N9tH4ZrTYqKgeIdHQ=="
 
 springdoc:
   api-docs:
