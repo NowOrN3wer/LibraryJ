@@ -1,4 +1,4 @@
-package com.idb.microservicedemo.library.domain;
+package com.idb.microservicedemo.library.domain.appuser;
 
 import jakarta.persistence.*;
 import lombok.*;

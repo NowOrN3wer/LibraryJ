@@ -1,5 +1,6 @@
-package com.idb.microservicedemo.library.domain;
+package com.idb.microservicedemo.library.domain.abstractions;
 
+import com.idb.microservicedemo.library.domain.EntityStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

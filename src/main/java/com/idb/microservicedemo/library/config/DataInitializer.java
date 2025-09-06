@@ -1,6 +1,6 @@
 package com.idb.microservicedemo.library.config;
 
-import com.idb.microservicedemo.library.domain.AppUser;
+import com.idb.microservicedemo.library.domain.appuser.AppUser;
 import com.idb.microservicedemo.library.repository.AppUserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;

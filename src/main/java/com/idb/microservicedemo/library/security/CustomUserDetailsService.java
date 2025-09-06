@@ -1,6 +1,5 @@
 package com.idb.microservicedemo.library.security;
 
-import com.idb.microservicedemo.library.domain.AppUser;
 import com.idb.microservicedemo.library.repository.AppUserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

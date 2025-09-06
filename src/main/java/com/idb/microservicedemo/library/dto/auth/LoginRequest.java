@@ -1,4 +1,4 @@
-package com.idb.microservicedemo.library.dto;
+package com.idb.microservicedemo.library.dto.auth;
 
 public class LoginRequest {
     private String emailOrUserName;
