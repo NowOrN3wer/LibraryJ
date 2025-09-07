@@ -22,20 +22,21 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class WriterRepositoryImpl implements WriterRepositoryCustom {
 
-    private final EntityManager em;
-    private final WriterMapper writerMapper;
-
     // --- Tekil whitelist (her yerde aynı) ---
     private static final Map<String, ComparableExpressionBase<?>> SORTABLE_FIELDS;
+
     static {
         QWriter w = QWriter.writer;
         SORTABLE_FIELDS = Map.of(
-                "firstName",   w.firstName,
-                "lastName",    w.lastName,
-                "email",       w.email,
+                "firstName", w.firstName,
+                "lastName", w.lastName,
+                "email", w.email,
                 "nationality", w.nationality
         );
     }
+
+    private final EntityManager em;
+    private final WriterMapper writerMapper;
 
     @Override
     public GetPageWriterResponse getPage(GetPageWriterRequest request) {
@@ -109,8 +110,8 @@ public class WriterRepositoryImpl implements WriterRepositoryCustom {
     private void applyPaging(GetPageWriterRequest req, JPAQuery<Writer> query) {
         if (req.isGetAllData()) return;
         int pageNumber = Math.max(1, req.getPageNumber());
-        int pageSize   = Math.max(1, req.getPageSize());
-        long offset    = (long) (pageNumber - 1) * pageSize;
+        int pageSize = Math.max(1, req.getPageSize());
+        long offset = (long) (pageNumber - 1) * pageSize;
         query.offset(offset).limit(pageSize);
     }
 }

@@ -14,6 +14,7 @@ public interface WriterMapper {
 
     // DTO -> Entity
     //@Mapping(target = "books", ignore = true) // gerekirse ilişkileri ignore et
-    @Mapping(target = "isDeleted", ignore = true) // gerekirse ilişkileri ignore et
+    @Mapping(target = "isDeleted", ignore = true)
+    // gerekirse ilişkileri ignore et
     Writer toEntity(WriterDto dto);
 }

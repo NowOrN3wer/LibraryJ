@@ -5,7 +5,10 @@ import com.idb.microservicedemo.library.dto.auth.LoginRequest;
 import com.idb.microservicedemo.library.dto.auth.LoginResponse;
 import com.idb.microservicedemo.library.dto.auth.RefreshRequest;
 import com.idb.microservicedemo.library.service.auth.AuthService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -13,7 +16,9 @@ public class AuthController {
 
     private final AuthService authService;
 
-    public AuthController(AuthService authService) { this.authService = authService; }
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("/login")
     public Result<LoginResponse> login(@RequestBody LoginRequest request) {

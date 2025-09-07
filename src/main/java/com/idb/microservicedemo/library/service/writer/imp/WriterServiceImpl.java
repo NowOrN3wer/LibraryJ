@@ -25,6 +25,12 @@ import java.util.Map;
 @Transactional
 public class WriterServiceImpl implements WriterService {
 
+    private static final Map<String, ComparableExpressionBase<?>> SORTABLE = Map.of(
+            "firstName", QWriter.writer.firstName,
+            "lastName", QWriter.writer.lastName,
+            "email", QWriter.writer.email,
+            "nationality", QWriter.writer.nationality
+    );
     private final WriterRepository writerRepository;
     private final WriterMapper writerMapper;
     private final EntityManager em;
@@ -75,13 +81,6 @@ public class WriterServiceImpl implements WriterService {
         return resp;
     }
 
-    private static final Map<String, ComparableExpressionBase<?>> SORTABLE = Map.of(
-            "firstName", QWriter.writer.firstName,
-            "lastName",  QWriter.writer.lastName,
-            "email",     QWriter.writer.email,
-            "nationality", QWriter.writer.nationality
-    );
-
     private BooleanBuilder buildFilters(GetPageWriterRequest req, QWriter w) {
         BooleanBuilder where = new BooleanBuilder();
         if (req.getFirstName() != null && !req.getFirstName().isBlank()) {
@@ -114,10 +113,9 @@ public class WriterServiceImpl implements WriterService {
         }
     }
 
-    private record Paging(int pageNumber, int pageSize) {}
     private Paging normalizePaging(GetPageWriterRequest req) {
         int pageNumber = Math.max(1, req.getPageNumber());
-        int pageSize   = Math.max(1, req.getPageSize());
+        int pageSize = Math.max(1, req.getPageSize());
         return new Paging(pageNumber, pageSize);
     }
 
@@ -125,5 +123,8 @@ public class WriterServiceImpl implements WriterService {
         if (getAllData) return;
         long offset = (long) (p.pageNumber - 1) * p.pageSize;
         query.offset(offset).limit(p.pageSize);
+    }
+
+    private record Paging(int pageNumber, int pageSize) {
     }
 }

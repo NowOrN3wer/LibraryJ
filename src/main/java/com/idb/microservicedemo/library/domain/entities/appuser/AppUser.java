@@ -27,33 +27,26 @@ public class AppUser implements UserDetails {
 
     @Column(nullable = false, length = 100)
     private String lastName;
+    @Column(unique = true, nullable = false, length = 100)
+    private String username; // IdentityUser.UserName karşılığı
+    @Column(unique = true, nullable = false, length = 255)
+    private String email;
+    @Column(nullable = false)
+    private String password; // IdentityUser.PasswordHash karşılığı
+    private String phoneNumber;
+    private boolean phoneNumberConfirmed;
+    private boolean emailConfirmed;
+    private String refreshToken;
+    private OffsetDateTime refreshTokenExpires;
+    private boolean lockoutEnabled;
+    private OffsetDateTime lockoutEnd;
+    private int accessFailedCount;
+    private boolean twoFactorEnabled;
 
     @Transient
     public String getFullName() {
         return firstName + " " + lastName;
     }
-
-    @Column(unique = true, nullable = false, length = 100)
-    private String username; // IdentityUser.UserName karşılığı
-
-    @Column(unique = true, nullable = false, length = 255)
-    private String email;
-
-    @Column(nullable = false)
-    private String password; // IdentityUser.PasswordHash karşılığı
-
-    private String phoneNumber;
-    private boolean phoneNumberConfirmed;
-    private boolean emailConfirmed;
-
-    private String refreshToken;
-    private OffsetDateTime refreshTokenExpires;
-
-    private boolean lockoutEnabled;
-    private OffsetDateTime lockoutEnd;
-    private int accessFailedCount;
-
-    private boolean twoFactorEnabled;
 
     // --- UserDetails implementasyonu ---
     @Override

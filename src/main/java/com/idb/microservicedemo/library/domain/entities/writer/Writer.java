@@ -1,7 +1,10 @@
 package com.idb.microservicedemo.library.domain.entities.writer;
 
 import com.idb.microservicedemo.library.domain.abstractions.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
